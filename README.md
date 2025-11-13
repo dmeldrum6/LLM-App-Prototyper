@@ -2,6 +2,8 @@
 
 A web application that generates self-contained, single-file HTML applications using AI. Works with any OpenAI-compatible API endpoint, including local LLM installations. Simply describe what you want, and the LLM will create a complete, downloadable web app for you.
 
+<img width="1917" height="910" alt="image" src="https://github.com/user-attachments/assets/81ae4fd5-d5b9-4211-9ee1-421fa9bd4d51" />
+
 ## Features
 
 - **Chat Interface**: Intuitive chat-based interaction for describing your app requirements
