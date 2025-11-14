@@ -1,6 +1,6 @@
 # LLM App Prototyper 🚀
 
-A web application that generates self-contained, single-file HTML applications using AI. Works with any OpenAI-compatible API endpoint, including local LLM installations. Simply describe what you want, and the LLM will create a complete, downloadable web app for you.
+A web application that generates self-contained, single-file HTML applications using AI. Works with any OpenAI-compatible API endpoint, including local LLM installations. Simply describe what you want, and the LLM will create a complete, downloadable web app for you. This works best with larger models, and models that excel at coding tasks. The example in the image is wired up to GPT-5 via the API.
 
 <img width="1917" height="910" alt="image" src="https://github.com/user-attachments/assets/81ae4fd5-d5b9-4211-9ee1-421fa9bd4d51" />
 
