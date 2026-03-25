@@ -4,7 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM App Prototyper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #17171f;
+            --surface-2: #1e1e28;
+            --surface-3: #252532;
+            --border: #2e2e3e;
+            --border-light: #3a3a50;
+            --accent: #7c6af7;
+            --accent-hover: #6b58e8;
+            --accent-glow: rgba(124, 106, 247, 0.25);
+            --text-primary: #e8e8f0;
+            --text-secondary: #8b8ba8;
+            --text-muted: #55556a;
+            --success: #34d399;
+            --success-bg: rgba(52, 211, 153, 0.1);
+            --danger: #f87171;
+            --danger-bg: rgba(248, 113, 113, 0.1);
+            --warning: #fbbf24;
+            --warning-bg: rgba(251, 191, 36, 0.08);
+            --user-bubble: #2d2a4a;
+            --user-bubble-border: #4a4580;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        [data-theme="light"] {
+            --bg: #f4f4f8;
+            --surface: #ffffff;
+            --surface-2: #f8f8fc;
+            --surface-3: #ededf5;
+            --border: #e2e2ed;
+            --border-light: #d0d0e0;
+            --accent: #6655e8;
+            --accent-hover: #5544d0;
+            --accent-glow: rgba(102, 85, 232, 0.15);
+            --text-primary: #1a1a2e;
+            --text-secondary: #5a5a78;
+            --text-muted: #9090aa;
+            --success: #059669;
+            --success-bg: rgba(5, 150, 105, 0.08);
+            --danger: #dc2626;
+            --danger-bg: rgba(220, 38, 38, 0.08);
+            --warning: #d97706;
+            --warning-bg: rgba(217, 119, 6, 0.08);
+            --user-bubble: #eeecfd;
+            --user-bubble-border: #c4bef5;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,566 +68,1049 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text-primary);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: #f5f5f5;
+            overflow: hidden;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        /* ---- TOP BAR ---- */
+        .topbar {
+            height: 52px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 1.25rem;
+            gap: 1rem;
+            flex-shrink: 0;
+            z-index: 10;
         }
 
-        .header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
         }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 0.9rem;
+        .brand-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
         }
 
-        .container {
+        .topbar-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        .model-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--surface-3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .model-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+        }
+
+        .topbar-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            padding: 0.4rem 0.65rem;
+            font-size: 0.82rem;
+            font-family: var(--font);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+            font-weight: 500;
+        }
+
+        .icon-btn:hover {
+            background: var(--surface-3);
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .icon-btn.danger:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: var(--danger-bg);
+        }
+
+        /* ---- MAIN LAYOUT ---- */
+        .workspace {
             flex: 1;
             display: flex;
             overflow: hidden;
         }
 
+        /* ---- CHAT PANEL ---- */
         .chat-panel {
-            width: 40%;
+            width: 380px;
+            min-width: 280px;
+            max-width: 560px;
             display: flex;
             flex-direction: column;
-            background: white;
-            border-right: 1px solid #e0e0e0;
-        }
-
-        .preview-panel {
-            width: 60%;
-            display: flex;
-            flex-direction: column;
-            background: #fafafa;
+            border-right: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 1rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            scroll-behavior: smooth;
         }
 
-        .message {
-            margin-bottom: 1rem;
-            animation: slideIn 0.3s ease-out;
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+
+        /* Empty state */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .empty-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            opacity: 0.8;
         }
 
-        .message-label {
+        .empty-state h3 {
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-secondary);
         }
 
-        .message-content {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            line-height: 1.5;
+        .empty-state p {
+            font-size: 0.82rem;
+            line-height: 1.6;
+            max-width: 260px;
         }
 
-        .user-message .message-content {
-            background: #667eea;
+        .example-prompts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            width: 100%;
+        }
+
+        .example-chip {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            font-family: var(--font);
+        }
+
+        .example-chip:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        /* Messages */
+        .message {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            animation: fadeUp 0.2s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 0.25rem;
+        }
+
+        .message-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .user-message .message-avatar {
+            background: var(--accent);
             color: white;
-            margin-left: 2rem;
         }
 
-        .assistant-message .message-content {
-            background: #f0f0f0;
-            color: #333;
-            margin-right: 2rem;
+        .assistant-message .message-avatar {
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            color: white;
         }
 
-        .system-message .message-content {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-            font-size: 0.9rem;
+        .system-message .message-avatar {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border: 1px solid rgba(251, 191, 36, 0.3);
         }
 
+        .message-author {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .message-body {
+            padding: 0.7rem 0.9rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .user-message .message-body {
+            background: var(--user-bubble);
+            border: 1px solid var(--user-bubble-border);
+            color: var(--text-primary);
+            margin-left: 1.75rem;
+        }
+
+        .assistant-message .message-body {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            margin-left: 1.75rem;
+        }
+
+        .system-message .message-body {
+            background: var(--warning-bg);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            color: var(--warning);
+            font-size: 0.82rem;
+            margin-left: 1.75rem;
+        }
+
+        /* ---- INPUT AREA ---- */
         .input-area {
             padding: 1rem;
-            background: white;
-            border-top: 1px solid #e0e0e0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
         }
 
-        .input-group {
-            display: flex;
-            gap: 0.5rem;
+        .input-wrapper {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         textarea {
-            flex: 1;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            resize: none;
-            transition: border-color 0.2s;
-        }
-
-        textarea:focus {
+            width: 100%;
+            background: transparent;
+            border: none;
             outline: none;
-            border-color: #667eea;
+            padding: 0.75rem 1rem 0;
+            font-size: 0.875rem;
+            font-family: var(--font);
+            color: var(--text-primary);
+            resize: none;
+            min-height: 72px;
+            max-height: 180px;
+            line-height: 1.6;
         }
 
-        button {
-            padding: 0.75rem 1.5rem;
-            background: #667eea;
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem 0.6rem;
+        }
+
+        .input-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        kbd {
+            background: var(--surface-3);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+
+        .send-btn {
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            border-radius: var(--radius-sm);
+            padding: 0.45rem 1rem;
+            font-size: 0.83rem;
             font-weight: 600;
+            font-family: var(--font);
             cursor: pointer;
-            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
         }
 
-        button:hover:not(:disabled) {
-            background: #5568d3;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .send-btn:hover:not(:disabled) {
+            background: var(--accent-hover);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
-        button:disabled {
-            background: #ccc;
+        .send-btn:disabled {
+            opacity: 0.45;
             cursor: not-allowed;
         }
 
-        .preview-header {
-            padding: 1rem;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
+        /* Loading dots */
+        .loading-dots {
             display: flex;
-            justify-content: space-between;
+            gap: 3px;
             align-items: center;
         }
 
-        .preview-header h2 {
-            font-size: 1.1rem;
-            color: #333;
+        .loading-dots span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: blink 1.2s infinite;
         }
 
-        .preview-actions {
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0.2; }
+            40% { opacity: 1; }
+        }
+
+        /* ---- RESIZE HANDLE ---- */
+        .resize-handle {
+            width: 4px;
+            background: transparent;
+            cursor: col-resize;
+            flex-shrink: 0;
+            position: relative;
+            transition: background 0.15s;
+        }
+
+        .resize-handle:hover,
+        .resize-handle.dragging {
+            background: var(--accent);
+        }
+
+        .resize-handle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 40px;
+            border-radius: 2px;
+            background: var(--border-light);
+            transition: background 0.15s;
+        }
+
+        .resize-handle:hover::after,
+        .resize-handle.dragging::after {
+            background: var(--accent);
+        }
+
+        /* ---- PREVIEW PANEL ---- */
+        .preview-panel {
+            flex: 1;
             display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            min-width: 0;
+        }
+
+        .preview-toolbar {
+            height: 45px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
             gap: 0.5rem;
+            flex-shrink: 0;
         }
 
-        .preview-actions button {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+        .tab-group {
+            display: flex;
+            gap: 0.2rem;
+            background: var(--surface-3);
+            border-radius: var(--radius-sm);
+            padding: 3px;
         }
 
-        .download-btn {
-            background: #10b981;
+        .tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.3rem 0.75rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            font-family: var(--font);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
         }
 
-        .download-btn:hover:not(:disabled) {
-            background: #059669;
+        .tab.active {
+            background: var(--surface);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
         }
 
-        .clear-btn {
-            background: #ef4444;
+        .tab:not(.active):hover {
+            color: var(--text-secondary);
         }
 
-        .clear-btn:hover:not(:disabled) {
-            background: #dc2626;
+        .toolbar-spacer { flex: 1; }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
+            font-family: var(--font);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            background: var(--surface-3);
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .action-btn.success-btn:hover:not(:disabled) {
+            border-color: var(--success);
+            color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .action-btn.danger-btn:hover:not(:disabled) {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: var(--danger-bg);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Preview area */
         .preview-content {
             flex: 1;
-            padding: 1rem;
             overflow: hidden;
+            position: relative;
         }
 
         iframe {
             width: 100%;
             height: 100%;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border: none;
             background: white;
+            display: block;
         }
 
-        .no-preview {
+        /* Code view */
+        .code-view {
+            display: none;
+            width: 100%;
             height: 100%;
+            overflow: auto;
+            background: var(--bg);
+        }
+
+        .code-view.visible {
+            display: block;
+        }
+
+        .code-view pre {
+            padding: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            line-height: 1.7;
+            color: #abb2bf;
+            min-height: 100%;
+        }
+
+        /* Empty preview state */
+        .no-preview {
+            position: absolute;
+            inset: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #999;
-            font-size: 1.1rem;
+            gap: 1rem;
+            color: var(--text-muted);
+            text-align: center;
         }
 
-        .api-key-modal {
+        .no-preview-icon {
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+
+        .no-preview p {
+            font-size: 0.85rem;
+        }
+
+        /* ---- MODAL ---- */
+        .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            animation: fadeIn 0.15s ease-out;
         }
 
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
             width: 90%;
+            max-width: 480px;
+            animation: scaleIn 0.15s ease-out;
         }
 
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: #333;
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        .modal-content p {
-            margin-bottom: 1.5rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-
-        .modal-content input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .modal-actions {
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .loading {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
+        .modal-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .settings-btn {
+        .modal-close {
             background: transparent;
-            border: 2px solid white;
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0.2rem;
+            border-radius: 4px;
+            transition: color 0.15s;
         }
 
-        .settings-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+        .modal-close:hover { color: var(--text-primary); }
 
-        .header-actions {
+        .modal-body {
+            padding: 1.5rem;
             display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .field-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+        }
+
+        .field-input {
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.6rem 0.8rem;
+            font-size: 0.875rem;
+            font-family: var(--font);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            width: 100%;
+        }
+
+        .field-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .field-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
             gap: 0.5rem;
-            margin-top: 0.5rem;
         }
 
-        /* Dark Mode Styles */
-        body.dark-mode {
-            background: #1a1a1a;
-            color: #e0e0e0;
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.55rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all 0.15s;
         }
 
-        body.dark-mode .header {
-            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        .btn-primary:hover {
+            background: var(--accent-hover);
         }
 
-        body.dark-mode .chat-panel {
-            background: #2d2d2d;
-            border-right: 1px solid #404040;
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.55rem 1.25rem;
+            font-size: 0.875rem;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all 0.15s;
         }
 
-        body.dark-mode .preview-panel {
-            background: #1a1a1a;
+        .btn-ghost:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+            background: var(--surface-3);
         }
 
-        body.dark-mode .preview-header {
-            background: #2d2d2d;
-            border-bottom: 1px solid #404040;
+        /* ---- TOAST ---- */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+            pointer-events: none;
         }
 
-        body.dark-mode .preview-header h2 {
-            color: #e0e0e0;
+        .toast {
+            background: var(--surface-3);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+            animation: toastIn 0.2s ease-out, toastOut 0.2s ease-in 2.3s forwards;
+            pointer-events: none;
         }
 
-        body.dark-mode .message-label {
-            color: #b0b0b0;
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        body.dark-mode .user-message .message-content {
-            background: #4a5568;
-        }
-
-        body.dark-mode .assistant-message .message-content {
-            background: #3a3a3a;
-            color: #e0e0e0;
-        }
-
-        body.dark-mode .system-message .message-content {
-            background: #3d3520;
-            color: #ffd700;
-            border: 1px solid #5d5020;
-        }
-
-        body.dark-mode .input-area {
-            background: #2d2d2d;
-            border-top: 1px solid #404040;
-        }
-
-        body.dark-mode textarea {
-            background: #3a3a3a;
-            color: #e0e0e0;
-            border: 2px solid #505050;
-        }
-
-        body.dark-mode textarea:focus {
-            border-color: #667eea;
-        }
-
-        body.dark-mode .no-preview {
-            color: #666;
-        }
-
-        body.dark-mode .modal-content {
-            background: #2d2d2d;
-            color: #e0e0e0;
-        }
-
-        body.dark-mode .modal-content h2 {
-            color: #e0e0e0;
-        }
-
-        body.dark-mode .modal-content p {
-            color: #b0b0b0;
-        }
-
-        body.dark-mode .modal-content input {
-            background: #3a3a3a;
-            color: #e0e0e0;
-            border: 2px solid #505050;
-        }
-
-        body.dark-mode .modal-content input:focus {
-            border-color: #667eea;
-        }
-
-        body.dark-mode .modal-content label {
-            color: #b0b0b0 !important;
-        }
-
-        body.dark-mode iframe {
-            border: 2px solid #404040;
+        @keyframes toastOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🚀 LLM App Prototyper</h1>
-        <p>Generate self-contained web applications with AI</p>
-        <div class="header-actions">
-            <button class="settings-btn" onclick="newApp()">✨ New App</button>
-            <button class="settings-btn" onclick="toggleDarkMode()">🌓 Toggle Theme</button>
-            <button class="settings-btn" onclick="openSettings()">⚙️ API Settings</button>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="chat-panel">
-            <div class="chat-messages" id="chatMessages"></div>
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <div class="topbar-brand">
+            <div class="brand-icon">⚡</div>
+            LLM App Prototyper
+        </div>
+        <div class="topbar-divider"></div>
+        <div class="model-badge">
+            <div class="model-dot"></div>
+            <span id="modelLabel">—</span>
+        </div>
+        <div class="topbar-actions">
+            <button class="icon-btn" onclick="newApp()" title="New App (Ctrl+Shift+N)">
+                ✦ New App
+            </button>
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+                ◐ Theme
+            </button>
+            <button class="icon-btn" onclick="openSettings()" title="API Settings">
+                ⚙ Settings
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="workspace">
+
+        <!-- CHAT PANEL -->
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-messages" id="chatMessages">
+                <!-- Empty state shown via JS -->
+            </div>
             <div class="input-area">
-                <div class="input-group">
+                <div class="input-wrapper">
                     <textarea
                         id="userInput"
-                        placeholder="Describe the web app you want to create... (e.g., 'A weekly scheduling system for a label printing company with 7 pieces of equipment')"
+                        placeholder="Describe the app you want to build…"
                         rows="3"
                     ></textarea>
-                    <button id="sendBtn" onclick="sendMessage()">Send</button>
+                    <div class="input-footer">
+                        <span class="input-hint"><kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line</span>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            Send ↑
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- RESIZE HANDLE -->
+        <div class="resize-handle" id="resizeHandle"></div>
+
+        <!-- PREVIEW PANEL -->
         <div class="preview-panel">
-            <div class="preview-header">
-                <h2>Preview</h2>
-                <div class="preview-actions">
-                    <button class="download-btn" id="downloadBtn" onclick="downloadApp()" disabled>Download HTML</button>
-                    <button class="clear-btn" onclick="clearPreview()">Clear</button>
+            <div class="preview-toolbar">
+                <div class="tab-group">
+                    <button class="tab active" id="tabPreview" onclick="switchTab('preview')">Preview</button>
+                    <button class="tab" id="tabCode" onclick="switchTab('code')">Code</button>
+                </div>
+                <div class="toolbar-spacer"></div>
+                <div class="toolbar-actions">
+                    <button class="action-btn success-btn" id="downloadBtn" onclick="downloadApp()" disabled>
+                        ↓ Download
+                    </button>
+                    <button class="action-btn danger-btn" onclick="clearPreview()">
+                        ✕ Clear
+                    </button>
                 </div>
             </div>
+
             <div class="preview-content" id="previewContent">
-                <div class="no-preview">No app generated yet</div>
+                <div class="no-preview" id="noPreview">
+                    <div class="no-preview-icon">⬡</div>
+                    <p>Your generated app will appear here</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>API Configuration</h2>
+                <button class="modal-close" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="field-group">
+                    <label class="field-label" for="apiUrlInput">API Endpoint</label>
+                    <input class="field-input" type="text" id="apiUrlInput" placeholder="https://api.openai.com/v1/chat/completions">
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="apiModelInput">Model</label>
+                    <input class="field-input" type="text" id="apiModelInput" placeholder="gpt-4o">
+                </div>
+                <div class="field-group">
+                    <label class="field-label" for="apiKeyInput">API Key</label>
+                    <input class="field-input" type="password" id="apiKeyInput" placeholder="sk-…">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="closeSettings()">Cancel</button>
+                <button class="btn-primary" onclick="saveSettings()">Save</button>
             </div>
         </div>
     </div>
 
-    <div id="apiKeyModal" class="api-key-modal" style="display: none;">
-        <div class="modal-content">
-            <h2>LLM API Configuration</h2>
-            <p>Configure your LLM API settings. All settings are stored locally in your browser.</p>
-
-            <label for="apiUrlInput" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555;">API URL</label>
-            <input type="text" id="apiUrlInput" placeholder="https://api.openai.com/v1/chat/completions" style="margin-bottom: 1rem;">
-
-            <label for="apiModelInput" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555;">Model</label>
-            <input type="text" id="apiModelInput" placeholder="gpt-4o" style="margin-bottom: 1rem;">
-
-            <label for="apiKeyInput" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #555;">API Key</label>
-            <input type="password" id="apiKeyInput" placeholder="sk-..." style="margin-bottom: 1rem;">
-
-            <div class="modal-actions">
-                <button onclick="saveApiKey()">Save</button>
-            </div>
-        </div>
-    </div>
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        /* ============================================================
+           STATE
+        ============================================================ */
         let currentGeneratedHTML = '';
         let conversationHistory = [];
-        let apiKey = localStorage.getItem('openai_api_key') || '';
-        let apiUrl = localStorage.getItem('api_url') || 'https://api.openai.com/v1/chat/completions';
+        let apiKey   = localStorage.getItem('openai_api_key') || '';
+        let apiUrl   = localStorage.getItem('api_url')   || 'https://api.openai.com/v1/chat/completions';
         let apiModel = localStorage.getItem('api_model') || 'gpt-4o';
-        let darkMode = localStorage.getItem('dark_mode') === 'true';
+        let darkTheme = localStorage.getItem('theme') !== 'light';
+        let hasMessages = false;
+        let activeTab = 'preview';
 
-        // Check for API key on load
-        if (!apiKey) {
-            document.getElementById('apiKeyModal').style.display = 'flex';
+        /* ============================================================
+           INIT
+        ============================================================ */
+        (function init() {
+            applyTheme();
+            document.getElementById('modelLabel').textContent = apiModel || '—';
+            if (!apiKey) openSettings();
+            renderEmptyState();
+        })();
+
+        /* ============================================================
+           THEME
+        ============================================================ */
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', darkTheme ? 'dark' : 'light');
+            document.getElementById('themeBtn').textContent = darkTheme ? '◑ Theme' : '◐ Theme';
         }
 
-        // Apply dark mode on load
-        if (darkMode) {
-            document.body.classList.add('dark-mode');
+        function toggleTheme() {
+            darkTheme = !darkTheme;
+            localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
+            applyTheme();
         }
 
+        /* ============================================================
+           SETTINGS MODAL
+        ============================================================ */
         function openSettings() {
-            document.getElementById('apiKeyInput').value = apiKey;
-            document.getElementById('apiUrlInput').value = apiUrl;
+            document.getElementById('apiKeyInput').value   = apiKey;
+            document.getElementById('apiUrlInput').value   = apiUrl;
             document.getElementById('apiModelInput').value = apiModel;
-            document.getElementById('apiKeyModal').style.display = 'flex';
+            document.getElementById('settingsModal').style.display = 'flex';
         }
 
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            const url = document.getElementById('apiUrlInput').value.trim();
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function saveSettings() {
+            const key   = document.getElementById('apiKeyInput').value.trim();
+            const url   = document.getElementById('apiUrlInput').value.trim();
             const model = document.getElementById('apiModelInput').value.trim();
 
-            if (key && url && model) {
-                apiKey = key;
-                apiUrl = url;
-                apiModel = model;
-                localStorage.setItem('openai_api_key', key);
-                localStorage.setItem('api_url', url);
-                localStorage.setItem('api_model', model);
-                document.getElementById('apiKeyModal').style.display = 'none';
-                addMessage('system', 'API settings saved successfully!');
-            } else {
-                alert('Please fill in all fields');
+            if (!key || !url || !model) {
+                showToast('Please fill in all fields');
+                return;
             }
+
+            apiKey   = key;
+            apiUrl   = url;
+            apiModel = model;
+            localStorage.setItem('openai_api_key', key);
+            localStorage.setItem('api_url', url);
+            localStorage.setItem('api_model', model);
+
+            document.getElementById('modelLabel').textContent = model;
+            closeSettings();
+            showToast('Settings saved');
         }
 
-        function toggleDarkMode() {
-            darkMode = !darkMode;
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('dark_mode', darkMode);
+        /* ============================================================
+           MESSAGES
+        ============================================================ */
+        const EXAMPLES = [
+            'A habit tracker with streaks and a progress calendar',
+            'A Pomodoro timer with task list and session stats',
+            'A weekly schedule planner for a 7-machine print shop',
+            'A personal finance dashboard with charts',
+        ];
+
+        function renderEmptyState() {
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = '';
+            hasMessages = false;
+
+            const el = document.createElement('div');
+            el.className = 'empty-state';
+            el.id = 'emptyState';
+            el.innerHTML = `
+                <div class="empty-icon">⚡</div>
+                <h3>What should we build?</h3>
+                <p>Describe any web app and Claude will generate a fully functional single-file HTML prototype.</p>
+                <div class="example-prompts">
+                    ${EXAMPLES.map(e => `<button class="example-chip" onclick="usePrompt(this)">${e}</button>`).join('')}
+                </div>
+            `;
+            container.appendChild(el);
         }
 
-        function newApp() {
-            // Clear conversation history
-            conversationHistory = [];
-            // Clear chat messages
-            document.getElementById('chatMessages').innerHTML = '';
-            // Clear preview
-            clearPreview();
-            addMessage('system', 'Started new app. Context cleared.');
+        function usePrompt(btn) {
+            document.getElementById('userInput').value = btn.textContent;
+            document.getElementById('userInput').focus();
         }
 
         function addMessage(role, content) {
-            const messagesDiv = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}-message`;
+            const container = document.getElementById('chatMessages');
 
-            const label = role === 'user' ? 'You' : role === 'assistant' ? 'Assistant' : 'System';
-            messageDiv.innerHTML = `
-                <div class="message-label">${label}</div>
-                <div class="message-content">${escapeHtml(content)}</div>
+            // Remove empty state on first real message
+            if (!hasMessages) {
+                const es = document.getElementById('emptyState');
+                if (es) es.remove();
+                hasMessages = true;
+            }
+
+            const labels = { user: 'You', assistant: 'Assistant', system: 'System' };
+            const avatars = { user: 'U', assistant: 'A', system: '!' };
+
+            const el = document.createElement('div');
+            el.className = `message ${role}-message`;
+            el.innerHTML = `
+                <div class="message-meta">
+                    <div class="message-avatar">${avatars[role] || '?'}</div>
+                    <span class="message-author">${labels[role] || role}</span>
+                </div>
+                <div class="message-body">${escapeHtml(content)}</div>
             `;
-
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            container.appendChild(el);
+            container.scrollTop = container.scrollHeight;
         }
 
         function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML.replace(/\n/g, '<br>');
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML.replace(/\n/g, '<br>');
         }
 
+        /* ============================================================
+           SEND MESSAGE
+        ============================================================ */
         async function sendMessage() {
             const input = document.getElementById('userInput');
             const message = input.value.trim();
-
             if (!message) return;
 
             if (!apiKey) {
-                alert('Please set your OpenAI API key first');
                 openSettings();
                 return;
             }
 
             const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
-            sendBtn.innerHTML = '<span class="loading"></span>Generating...';
+            sendBtn.innerHTML = `<span class="loading-dots"><span></span><span></span><span></span></span>`;
 
             addMessage('user', message);
             input.value = '';
 
             try {
-                // Build conversation history
                 const messages = [
                     {
                         role: 'system',
@@ -591,10 +1130,7 @@ CRITICAL REQUIREMENTS:
 The output should start with <!DOCTYPE html> and nothing else. Do not wrap it in markdown code blocks or add any explanatory text.`
                     },
                     ...conversationHistory,
-                    {
-                        role: 'user',
-                        content: message
-                    }
+                    { role: 'user', content: message }
                 ];
 
                 const response = await fetch(apiUrl, {
@@ -605,82 +1141,182 @@ The output should start with <!DOCTYPE html> and nothing else. Do not wrap it in
                     },
                     body: JSON.stringify({
                         model: apiModel,
-                        messages: messages,
+                        messages,
                         temperature: 0.7,
                         max_tokens: 4000
                     })
                 });
 
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error?.message || 'API request failed');
+                    const err = await response.json();
+                    throw new Error(err.error?.message || `HTTP ${response.status}`);
                 }
 
                 const data = await response.json();
-                let generatedHTML = data.choices[0].message.content.trim();
+                let html = data.choices[0].message.content.trim();
+                html = html.replace(/```html\n?/g, '').replace(/```\n?/g, '');
 
-                // Remove markdown code blocks if present
-                generatedHTML = generatedHTML.replace(/```html\n?/g, '').replace(/```\n?/g, '');
+                currentGeneratedHTML = html;
 
-                currentGeneratedHTML = generatedHTML;
+                conversationHistory.push({ role: 'user', content: message });
+                conversationHistory.push({ role: 'assistant', content: html });
 
-                // Store conversation history
-                conversationHistory.push({
-                    role: 'user',
-                    content: message
-                });
-                conversationHistory.push({
-                    role: 'assistant',
-                    content: generatedHTML
-                });
+                addMessage('assistant', 'App generated! Preview is ready — download when satisfied or ask for changes.');
+                renderPreview(html);
 
-                addMessage('assistant', 'App generated successfully! Preview it on the right and download when ready.');
-
-                // Show preview
-                const previewContent = document.getElementById('previewContent');
-                previewContent.innerHTML = '<iframe id="previewFrame"></iframe>';
-
-                const iframe = document.getElementById('previewFrame');
-                iframe.srcdoc = generatedHTML;
-
-                document.getElementById('downloadBtn').disabled = false;
-
-            } catch (error) {
-                addMessage('system', `Error: ${error.message}`);
+            } catch (err) {
+                addMessage('system', `Error: ${err.message}`);
             } finally {
                 sendBtn.disabled = false;
-                sendBtn.textContent = 'Send';
+                sendBtn.innerHTML = 'Send ↑';
             }
+        }
+
+        /* ============================================================
+           PREVIEW & TABS
+        ============================================================ */
+        function renderPreview(html) {
+            const content = document.getElementById('previewContent');
+
+            // Remove no-preview if present
+            const np = document.getElementById('noPreview');
+            if (np) np.remove();
+
+            // Create/update iframe
+            let iframe = document.getElementById('previewFrame');
+            if (!iframe) {
+                iframe = document.createElement('iframe');
+                iframe.id = 'previewFrame';
+                iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals');
+                content.appendChild(iframe);
+            }
+            iframe.srcdoc = html;
+            iframe.style.display = activeTab === 'preview' ? 'block' : 'none';
+
+            // Update code view
+            let codeView = document.getElementById('codeView');
+            if (!codeView) {
+                codeView = document.createElement('div');
+                codeView.className = 'code-view';
+                codeView.id = 'codeView';
+                codeView.innerHTML = '<pre></pre>';
+                content.appendChild(codeView);
+            }
+            codeView.querySelector('pre').textContent = html;
+            codeView.style.display = activeTab === 'code' ? 'block' : 'none';
+
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+
+            document.getElementById('tabPreview').classList.toggle('active', tab === 'preview');
+            document.getElementById('tabCode').classList.toggle('active', tab === 'code');
+
+            const iframe = document.getElementById('previewFrame');
+            const codeView = document.getElementById('codeView');
+
+            if (iframe) iframe.style.display = tab === 'preview' ? 'block' : 'none';
+            if (codeView) codeView.style.display = tab === 'code' ? 'block' : 'none';
+        }
+
+        function clearPreview() {
+            const content = document.getElementById('previewContent');
+            content.innerHTML = `<div class="no-preview" id="noPreview">
+                <div class="no-preview-icon">⬡</div>
+                <p>Your generated app will appear here</p>
+            </div>`;
+            currentGeneratedHTML = '';
+            document.getElementById('downloadBtn').disabled = true;
+            activeTab = 'preview';
+            document.getElementById('tabPreview').classList.add('active');
+            document.getElementById('tabCode').classList.remove('active');
         }
 
         function downloadApp() {
             if (!currentGeneratedHTML) return;
-
             const blob = new Blob([currentGeneratedHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
             a.download = `app-${Date.now()}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
-            addMessage('system', 'App downloaded successfully!');
+            showToast('App downloaded');
         }
 
-        function clearPreview() {
-            const previewContent = document.getElementById('previewContent');
-            previewContent.innerHTML = '<div class="no-preview">No app generated yet</div>';
-            currentGeneratedHTML = '';
-            document.getElementById('downloadBtn').disabled = true;
+        /* ============================================================
+           NEW APP
+        ============================================================ */
+        function newApp() {
+            conversationHistory = [];
+            renderEmptyState();
+            clearPreview();
         }
 
-        // Allow Enter to send (Shift+Enter for new line)
-        document.getElementById('userInput').addEventListener('keydown', function(e) {
+        /* ============================================================
+           TOAST
+        ============================================================ */
+        function showToast(msg) {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = msg;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 2600);
+        }
+
+        /* ============================================================
+           RESIZE HANDLE
+        ============================================================ */
+        (function initResize() {
+            const handle = document.getElementById('resizeHandle');
+            const panel  = document.getElementById('chatPanel');
+            let dragging = false;
+            let startX, startW;
+
+            handle.addEventListener('mousedown', e => {
+                dragging = true;
+                startX = e.clientX;
+                startW = panel.offsetWidth;
+                handle.classList.add('dragging');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+            });
+
+            document.addEventListener('mousemove', e => {
+                if (!dragging) return;
+                const delta = e.clientX - startX;
+                const newW  = Math.max(280, Math.min(560, startW + delta));
+                panel.style.width = newW + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (!dragging) return;
+                dragging = false;
+                handle.classList.remove('dragging');
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            });
+        })();
+
+        /* ============================================================
+           KEYBOARD SHORTCUTS
+        ============================================================ */
+        document.getElementById('userInput').addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'N') {
+                e.preventDefault();
+                newApp();
             }
         });
     </script>
